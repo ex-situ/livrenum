@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
   <div class="actorsSelect">
 
@@ -67,138 +68,143 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import { mapGetters } from 'vuex'
-  import Autocomplete from './autocomplete'
+import Vue from "vue";
+import { mapGetters } from "vuex";
+import Autocomplete from "./autocomplete";
 
-  export default {
-    name: "ActorSelect",
-    components: {
-      Autocomplete
+export default {
+  name: "ActorSelect",
+  components: {
+    Autocomplete
+  },
+  data() {
+    return {
+      curValue: [],
+      unknownActor: false,
+      isOrganization: false,
+      txtActorName: "",
+      selRole: "",
+      allowedRoles: [
+        { text: "Acteur", value: "acteur" },
+        { text: "Artiste", value: "artiste" },
+        { text: "Audio", value: "audio" },
+        { text: "Auteur", value: "auteur" },
+        { text: "Conception", value: "conception" },
+        { text: "Création", value: "création" },
+        { text: "Design", value: "design" },
+        { text: "Développement", value: "développement" },
+        { text: "Direction", value: "direction" },
+        { text: "Direction artistique", value: "direction artistique" },
+        { text: "Distribution", value: "distribution" },
+        { text: "Écriture", value: "écriture" },
+        { text: "Édition", value: "édition" },
+        { text: "Effets sonores", value: "effets sonores" },
+        { text: "Illustration", value: "illustration" },
+        { text: "Montage", value: "montage" },
+        { text: "Musique", value: "musique" },
+        { text: "Production", value: "production" },
+        { text: "Programmation", value: "programmation" },
+        { text: "Publication", value: "publication" },
+        { text: "Réalisation", value: "réalisation" },
+        { text: "Scénarisation", value: "scénarisation" },
+        { text: "Autre", value: "autre" }
+      ]
+    };
+  },
+  props: {
+    value: {
+      type: Array,
+      default: function () {return [];},
+      required: true
+    }
+  },
+  computed: {
+    addButtonDisabled() {
+      return this.txtActorName === '' || this.selRole === '';
     },
-    data() {
-      return {
-        curValue: [],
-        unknownActor: false,
-        isOrganization: false,
-        txtActorName: "",
-        selRole: "",
-        allowedRoles: [
-          {text:'Acteur', value:'acteur'},
-          {text:'Artiste', value:'artiste'},
-          {text:'Audio', value:'audio'},
-          {text:'Auteur', value:'auteur'},
-          {text:'Conception', value:'conception'},
-          {text:'Création', value:'création'},
-          {text:'Design', value:'design'},
-          {text:'Développement', value:'développement'},
-          {text:'Direction', value:'direction'},
-          {text:'Direction artistique', value:'direction artistique'},
-          {text:'Distribution', value:'distribution'},
-          {text:'Écriture', value:'écriture'},
-          {text:'Édition', value:'édition'},
-          {text:'Effets sonores', value:'effets sonores'},
-          {text:'Illustration', value:'illustration'},
-          {text:'Montage', value:'montage'},
-          {text:'Musique', value:'musique'},
-          {text:'Production', value:'production'},
-          {text:'Programmation', value:'programmation'},
-          {text:'Publication', value:'publication'},
-          {text:'Réalisation', value:'réalisation'},
-          {text:'Scénarisation', value:'scénarisation'},
-          {text:'Autre', value:'autre'}
-        ]
-      }
+    suggestions() {
+      return this.knownActors.reduce((actors, actor) => [...actors, actor.fullName], []);
     },
-    props: {
-      value: {
-        type: Array,
-        default: [],
-        required: true
-      }
-    },
-    computed: {
-      addButtonDisabled() {
-        return this.txtActorName == "" || this.selRole == "";
-      },
-      suggestions() {
-        return this.knownActors.reduce(
-          (actors, actor) => [...actors, actor.fullName],
-        []);
-      },
-      isValidPersonName() {
-        let valid = this.txtActorName.split(' ').length >= 2;
-        if (!valid)
-          this.isOrganization = true;
-        else
-          this.isOrganization = null;
+    isValidPersonName() {
+      const valid = this.txtActorName.split(' ').length >= 2;
+      if (!valid) this.isOrganization = true;
+      else this.isOrganization = null;
 
-        return valid
-      },
-      ...mapGetters({
-        knownActors: 'sortedActors'
-      })
+      return valid;
     },
-    methods: {
-      addActor(fullName, role) {
-        let actor = this.actorByName(fullName);
+    ...mapGetters({
+      knownActors: 'sortedActors',
+    }),
+  },
+  methods: {
+    addActor(fullName, role) {
+      const actor = this.actorByName(fullName);
 
-        if (actor) {
-          this.curValue.push( {actor:actor, role:role, isMajor:false} );
-          this.$emit('input', this.curValue);
-          this.txtActorName = "";
-          this.selRole = "";
-        } else {
-          this.$store.dispatch('newActor', { fullName: fullName, name: fullName, isOrganization: this.isOrganization })
-          .then( () => {
-            this.curValue.push( {actor:this.actorByName(fullName), role:role, isMajor:false} );
+      if (actor) {
+        this.curValue.push({ actor, role, isMajor: false });
+        this.$emit('input', this.curValue);
+        this.txtActorName = '';
+        this.selRole = '';
+      } else {
+        this.$store
+          .dispatch('newActor', {
+            fullName,
+            name: fullName,
+            isOrganization: this.isOrganization,
+          })
+          .then(() => {
+            this.curValue.push({
+              actor: this.actorByName(fullName),
+              role,
+              isMajor: false,
+            });
             this.$emit('input', this.curValue);
-            this.txtActorName = "";
-            this.selRole = "";
+            this.txtActorName = '';
+            this.selRole = '';
             this.actorChange(true);
           })
-          .catch( () => {
+          .catch(() => {
             console.log("Erreur lors de l'ajout du créateur!");
           });
-        }
-      },
-      removeActor(index) {
-        this.curValue.splice(index, 1);
-        this.$emit('input', this.curValue);
-      },
-      actorByName(fullName) {
-        return this.knownActors.find( (el) =>  el.fullName === fullName);
-      },
-      actorChange(e) {
-        if (e === true) {
-          this.unknownActor = false
-        } else {
-          this.unknownActor = true
-        }
       }
     },
-    created: function() {
-      this.curValue = this.value;
-    }
-  }
+    removeActor(index) {
+      this.curValue.splice(index, 1);
+      this.$emit('input', this.curValue);
+    },
+    actorByName(fullName) {
+      return this.knownActors.find(el => el.fullName === fullName);
+    },
+    actorChange(e) {
+      if (e === true) {
+        this.unknownActor = false;
+      } else {
+        this.unknownActor = true;
+      }
+    },
+  },
+  created() {
+    this.curValue = this.value;
+  },
+};
 </script>
 
 <style scoped>
-  .actor-name {
-    position: relative;
-    width:100%;
-  }
-  .actor-list {
-    margin-bottom: 1em;
-  }
-  .actor-control{
-    width: 100%;
-  }
-  .unknown-creator {
-    width: 100%;
-    background-color: #fff;
-    position: absolute;
-    left: 0;
-    z-index: 10;
-  }
+.actor-name {
+  position: relative;
+  width: 100%;
+}
+.actor-list {
+  margin-bottom: 1em;
+}
+.actor-control {
+  width: 100%;
+}
+.unknown-creator {
+  width: 100%;
+  background-color: #fff;
+  position: absolute;
+  left: 0;
+  z-index: 10;
+}
 </style>

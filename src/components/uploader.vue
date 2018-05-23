@@ -17,47 +17,47 @@
 </template>
 
 <script>
-  import Vue from 'vue';
-  import axios from 'axios'
+// import Vue from 'vue';
+import axios from 'axios';
 
-  export default {
-    name: 'uploader',
-    components: {
-      axios
+export default {
+  name: 'uploader',
+  components: {
+    axios,
+  },
+  data() {
+    return {
+      isDragover: false,
+      files: {},
+      formData: {},
+    };
+  },
+  props: {
+    uploadUrl: {
+      type: String,
+      default: '',
     },
-    data() {
-      return {
-        isDragover: false,
-        files: {},
-        formData: {}
-      }
+  },
+  computed: {
+  },
+  methods: {
+    fileDrop(e) {
+      this.isDragover = false;
+      this.formData.append('file', e.dataTransfer.files[0]);
+      this.formData.append('filename', e.dataTransfer.files[0].name);
+      axios.post(this.uploadUrl, this.formData)
+        .then((response) => {
+          this.$emit('uploaded', response.data.url);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
-    props: {
-      uploadUrl: {
-        type: String,
-        default: ""
-      }
-    },
-    computed: {
-    },
-    methods: {
-      fileDrop(e) {
-        this.isDragover = false;
-        this.formData.append("file", e.dataTransfer.files[0]);
-        this.formData.append("filename", e.dataTransfer.files[0].name);
-        axios.post(this.uploadUrl, this.formData)
-          .then( (response) => {
-            this.$emit('uploaded', response.data.url)
-          })
-          .catch( (error) => {
-            console.log(error);
-          });
-      }
-    },
-    created() {
-      this.formData = new FormData();
-    }
-  }
+  },
+  created() {
+    this.formData = new FormData();
+  },
+};
 </script>
 
 <style scope>

@@ -22,7 +22,7 @@
             <router-link v-if="alfSession.loggedIn" :to="{path:'/createurs'}" class="navbar-item" :class="{ 'is-active': $route.name==='Actors' }"><span>Créateurs</span></router-link>
           </div>
           <div class="navbar-end">
-            <alfresco server-address="http://livrenum.crilcq.org" v-model="alfSession" class="navbar-item is-hidden-touch" @connect="connect"></alfresco>
+            <alfresco server-address="http://livrenum.ex-situ.info" v-model="alfSession" class="navbar-item is-hidden-touch" @connect="connect"></alfresco>
           </div>
         </div>
       </nav>

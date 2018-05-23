@@ -5,7 +5,7 @@ import VueCookie from 'vue-cookie';
 
 Vue.use(Vuex)
 
-const serverAddress = 'http://outils.crilcq.org/api';
+const serverAddress = 'http://starbuck.ex-situ.info/api';
 
 function StringFilter(getterName, fieldName) {
   this.value = "";

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import deepClone from './utils'
 
 function isEmpty (opt) {
@@ -377,7 +378,7 @@ export default {
      * @param  {Array}
      * @returns {Array} returns a filtered and flat options list
      */
-    filterAndFlat (options, search, label) {
+    filterAndFlat(options, search, label) {
       return flow(
         filterGroups(search, label, this.groupValues, this.groupLabel, this.customLabel),
         flattenOptions(this.groupValues, this.groupLabel)
@@ -388,7 +389,7 @@ export default {
      * @param  {Array}
      * @returns {Array} returns a flat options list without group labels
      */
-    flatAndStrip (options) {
+    flatAndStrip(options) {
       return flow(
         flattenOptions(this.groupValues, this.groupLabel),
         stripGroups
@@ -398,8 +399,8 @@ export default {
      * Updates the search value
      * @param  {String}
      */
-    updateSearch (query) {
-      this.search = query
+    updateSearch(query) {
+      this.search = query;
     },
     /**
      * Finds out if the given query is already present
@@ -407,10 +408,10 @@ export default {
      * @param  {String}
      * @returns {Boolean} returns true if element is available
      */
-    isExistingOption (query) {
+    isExistingOption(query) {
       return !this.options
         ? false
-        : this.optionKeys.indexOf(query) > -1
+        : this.optionKeys.indexOf(query) > -1;
     },
     /**
      * Finds out if the given element is already present
@@ -418,11 +419,11 @@ export default {
      * @param  {Object||String||Integer} option passed element to check
      * @returns {Boolean} returns true if element is selected
      */
-    isSelected (option) {
+    isSelected(option) {
       const opt = this.trackBy
         ? option[this.trackBy]
         : option
-      return this.valueKeys.indexOf(opt) > -1
+      return this.valueKeys.indexOf(opt) > -1;
     },
     /**
      * Finds out if the given element is NOT already present
@@ -430,8 +431,8 @@ export default {
      * @param  {Object||String||Integer} option passed element to check
      * @returns {Boolean} returns true if element is not selected
      */
-    isNotSelected (option) {
-      return !this.isSelected(option)
+    isNotSelected(option) {
+      return !this.isSelected(option);
     },
     /**
      * Returns empty string when options is null/undefined
@@ -441,15 +442,15 @@ export default {
      * @param  {Object||String||Integer} Passed option
      * @returns {Object||String}
      */
-    getOptionLabel (option) {
+    getOptionLabel(option) {
       /* istanbul ignore else */
-      if (isEmpty(option)) return ''
+      if (isEmpty(option)) return '';
       /* istanbul ignore else */
-      if (option.isTag) return option.label
+      if (option.isTag) return option.label;
       /* istanbul ignore else */
-      if (option.$isLabel) return option.$groupLabel
+      if (option.$isLabel) return option.$groupLabel;
 
-      return this.customLabel(option, this.label) || ''
+      return this.customLabel(option, this.label) || '';
     },
     /**
      * Add the given option to the list of selected options
@@ -459,33 +460,33 @@ export default {
      * @param  {Object||String||Integer} option to select/deselect
      * @param  {Boolean} block removing
      */
-    select (option, key) {
+    select(option, key) {
       /* istanbul ignore else */
       if (this.blockKeys.indexOf(key) !== -1 || this.disabled || option.$isLabel || option.$isDisabled) return
       /* istanbul ignore else */
       if (this.max && this.multiple && this.internalValue.length === this.max) return
       if (option.isTag) {
-        this.$emit('tag', option.label, this.id)
+        this.$emit('tag', option.label, this.id);
         this.search = ''
-        if (this.closeOnSelect && !this.multiple) this.deactivate()
+        if (this.closeOnSelect && !this.multiple) this.deactivate();
       } else {
-        const isSelected = this.isSelected(option)
+        const isSelected = this.isSelected(option);
         if (isSelected) {
-          if (key !== 'Tab') this.removeElement(option)
-          return
+          if (key !== 'Tab') this.removeElement(option);
+          return;
         } else if (this.multiple) {
-          this.internalValue.push(option)
+          this.internalValue.push(option);
         } else {
-          this.internalValue = [option]
+          this.internalValue = [option];
         }
-        this.$emit('select', deepClone(option), this.id)
-        this.$emit('input', this.getValue(), this.id)
+        this.$emit('select', deepClone(option), this.id);
+        this.$emit('input', this.getValue(), this.id);
 
         /* istanbul ignore else */
-        if (this.clearOnSelect) this.search = ''
+        if (this.clearOnSelect) this.search = '';
       }
       /* istanbul ignore else */
-      if (this.closeOnSelect) this.deactivate()
+      if (this.closeOnSelect) this.deactivate();
     },
     /**
      * Removes the given option from the selected options.
@@ -495,25 +496,25 @@ export default {
      * @param  {type} option description
      * @returns {type}        description
      */
-    removeElement (option, shouldClose = true) {
+    removeElement(option, shouldClose = true) {
       /* istanbul ignore else */
-      if (this.disabled) return
+      if (this.disabled) return;
       /* istanbul ignore else */
       if (!this.allowEmpty && this.internalValue.length <= 1) {
-        this.deactivate()
-        return
+        this.deactivate();
+        return;
       }
 
       const index = typeof option === 'object'
         ? this.valueKeys.indexOf(option[this.trackBy])
-        : this.valueKeys.indexOf(option)
+        : this.valueKeys.indexOf(option);
 
-      this.internalValue.splice(index, 1)
-      this.$emit('remove', deepClone(option), this.id)
-      this.$emit('input', this.getValue(), this.id)
+      this.internalValue.splice(index, 1);
+      this.$emit('remove', deepClone(option), this.id);
+      this.$emit('input', this.getValue(), this.id);
 
       /* istanbul ignore else */
-      if (this.closeOnSelect && shouldClose) this.deactivate()
+      if (this.closeOnSelect && shouldClose) this.deactivate();
     },
     /**
      * Calls this.removeElement() with the last element
@@ -521,55 +522,55 @@ export default {
      *
      * @fires this#removeElement
      */
-    removeLastElement () {
+    removeLastElement() {
       /* istanbul ignore else */
-      if (this.blockKeys.indexOf('Delete') !== -1) return
+      if (this.blockKeys.indexOf('Delete') !== -1) return;
       /* istanbul ignore else */
       if (this.search.length === 0 && Array.isArray(this.internalValue)) {
-        this.removeElement(this.internalValue[this.internalValue.length - 1], false)
+        this.removeElement(this.internalValue[this.internalValue.length - 1], false);
       }
     },
     /**
      * Opens the multiselect’s dropdown.
      * Sets this.isOpen to TRUE
      */
-    activate () {
+    activate() {
       /* istanbul ignore else */
-      if (this.isOpen || this.disabled) return
+      if (this.isOpen || this.disabled) return;
 
-      this.adjustPosition()
+      this.adjustPosition();
       /* istanbul ignore else  */
       if (this.groupValues && this.pointer === 0 && this.filteredOptions.length) {
-        this.pointer = 1
+        this.pointer = 1;
       }
 
-      this.isOpen = true
+      this.isOpen = true;
       /* istanbul ignore else  */
       if (this.searchable) {
-        if (!this.preserveSearch) this.search = ''
-        this.$nextTick(() => this.$refs.search.focus())
+        if (!this.preserveSearch) this.search = '';
+        this.$nextTick(() => this.$refs.search.focus());
       } else {
-        this.$el.focus()
+        this.$el.focus();
       }
-      this.$emit('open', this.id)
+      this.$emit('open', this.id);
     },
     /**
      * Closes the multiselect’s dropdown.
      * Sets this.isOpen to FALSE
      */
-    deactivate () {
+    deactivate() {
       /* istanbul ignore else */
-      if (!this.isOpen) return
+      if (!this.isOpen) return;
 
-      this.isOpen = false
+      this.isOpen = false;
       /* istanbul ignore else  */
       if (this.searchable) {
-        this.$refs.search.blur()
+        this.$refs.search.blur();
       } else {
-        this.$el.blur()
+        this.$el.blur();
       }
-      if (!this.preserveSearch) this.search = ''
-      this.$emit('close', this.getValue(), this.id)
+      if (!this.preserveSearch) this.search = '';
+      this.$emit('close', this.getValue(), this.id);
     },
     /**
      * Call this.activate() or this.deactivate()
@@ -578,29 +579,28 @@ export default {
      * @fires this#activate || this#deactivate
      * @property {Boolean} isOpen indicates if dropdown is open
      */
-    toggle () {
-      this.isOpen
-        ? this.deactivate()
-        : this.activate()
+    toggle() {
+      // eslint-disable-next-line
+      this.isOpen ? this.deactivate() : this.activate();
     },
     /**
      * Updates the hasEnoughSpace variable used for
      * detecting where to expand the dropdown
      */
-    adjustPosition () {
-      if (typeof window === 'undefined') return
+    adjustPosition() {
+      if (typeof window === 'undefined') return;
 
-      const spaceAbove = this.$el.getBoundingClientRect().top
-      const spaceBelow = window.innerHeight - this.$el.getBoundingClientRect().bottom
-      const hasEnoughSpaceBelow = spaceBelow > this.maxHeight
+      const spaceAbove = this.$el.getBoundingClientRect().top;
+      const spaceBelow = window.innerHeight - this.$el.getBoundingClientRect().bottom;
+      const hasEnoughSpaceBelow = spaceBelow > this.maxHeight;
 
       if (hasEnoughSpaceBelow || spaceBelow > spaceAbove || this.openDirection === 'below' || this.openDirection === 'bottom') {
-        this.prefferedOpenDirection = 'below'
-        this.optimizedHeight = Math.min(spaceBelow, this.maxHeight) - 40
+        this.prefferedOpenDirection = 'below';
+        this.optimizedHeight = Math.min(spaceBelow, this.maxHeight) - 40;
       } else {
-        this.prefferedOpenDirection = 'above'
-        this.optimizedHeight = Math.min(spaceAbove, this.maxHeight) - 40
+        this.prefferedOpenDirection = 'above';
+        this.optimizedHeight = Math.min(spaceAbove, this.maxHeight) - 40;
       }
-    }
-  }
-}
+    },
+  },
+};
